@@ -44,6 +44,7 @@
     root.setAttribute("data-bg", t.background || "grid");
     root.setAttribute("data-photo", t.photo || "square");
     root.setAttribute("data-orientation", t.orientation || "scroll");
+    root.setAttribute("data-mode", t.mode || "professional");
     // per-profile colour overrides (blank → fall back to the preset's value)
     setVar(root, "--accent", t.accent);
     setVar(root, "--bg", t.bg);
@@ -208,6 +209,42 @@
       return el("div", { class: "l-gallery" }, (c.images || []).map(renderMedia));
     },
 
+    // career as a progress line; each node clicks open to tell its story
+    timeline: function (c) {
+      var items = c.milestones || c.items || [];
+      var line = el("ol", { class: "l-timeline" }, items.map(function (m) {
+        var node = el("button", { class: "tl-node", type: "button", "aria-expanded": "false" }, [
+          el("span", { class: "tl-dot", "aria-hidden": "true", text: m.emoji || "" }),
+          el("span", { class: "tl-year", text: m.year || "" }),
+          el("span", { class: "tl-title", text: m.title || "" })
+        ]);
+        var detail = m.note ? el("div", { class: "tl-detail", hidden: "" }, el("p", { text: m.note })) : null;
+        if (!m.note) node.style.cursor = "default";
+        return el("li", { class: "tl-item" }, [node, detail]);
+      }));
+      return el("div", { class: "l-timeline-wrap" }, line);
+    },
+
+    // places I've been: flag grid with a running count and check marks
+    countries: function (c) {
+      var list = c.countries || [];
+      var been = list.filter(function (x) { return x.been !== false; }).length;
+      var kids = [];
+      if (c.note) kids.push(el("p", { class: "l-tags__note", text: c.note }));
+      kids.push(el("p", { class: "l-countries__count" }, [
+        el("b", { text: String(been) }),
+        document.createTextNode(" of " + list.length + " visited")
+      ]));
+      kids.push(el("ul", { class: "l-countries" }, list.map(function (x) {
+        return el("li", { class: "country" + (x.been === false ? " country--todo" : "") }, [
+          el("span", { class: "country__flag", "aria-hidden": "true", text: x.flag || "🏳️" }),
+          el("span", { class: "country__name", text: x.name || "" }),
+          el("span", { class: "country__check", "aria-hidden": "true", text: x.been === false ? "" : "✓" })
+        ]);
+      })));
+      return el("div", null, kids);
+    },
+
     // fallback for text-only or unknown sections
     text: function (c) {
       return el("div", { style: "max-width:var(--measure)" }, [
@@ -304,6 +341,7 @@
     var head = [];
     if (s.eyebrow || showNumbers) {
       var eb = el("p", { class: "eyebrow" });
+      if (s.emoji) eb.appendChild(el("span", { class: "eyebrow__emoji", "aria-hidden": "true", text: s.emoji }));
       if (showNumbers) eb.appendChild(el("span", { class: "idx", text: ("0" + index).slice(-2) + " /" }));
       if (s.eyebrow) eb.appendChild(el("span", { text: s.eyebrow.toUpperCase() }));
       head.push(eb);
@@ -359,6 +397,19 @@
     var t = e.target;
     var cp = t.closest && t.closest(".copy-btn");
     if (cp) { e.preventDefault(); copy(cp.getAttribute("data-copy"), cp); return; }
+    // timeline node: click to walk the journey (reveal its story, light the dot)
+    var tn = t.closest && t.closest(".tl-node");
+    if (tn && !editing()) {
+      var li = tn.closest(".tl-item");
+      var det = li && li.querySelector(".tl-detail");
+      if (det) {
+        var open = tn.getAttribute("aria-expanded") === "true";
+        tn.setAttribute("aria-expanded", String(!open));
+        li.classList.toggle("tl-item--reached", !open);
+        det.hidden = open;
+      }
+      return;
+    }
     // add a project (edit mode)
     var addBtn = t.closest && t.closest(".l-projects__add");
     if (addBtn) {
@@ -447,6 +498,7 @@
     ".l-compact li",
     ".l-project__name", ".l-project__summary", ".spec dt", ".spec dd",
     ".project-notes li", ".chip", ".media figcaption",
+    ".tl-year", ".tl-title", ".tl-detail p", ".country__name",
     ".colophon span"
   ].join(",");
 
@@ -628,7 +680,7 @@
      Development-only. Delete this whole function to remove it entirely.
      ======================================================================== */
   function buildDevPanel() {
-    var t = Object.assign({ preset: "paper", fonts: "editorial", radius: 2, density: "comfortable", background: "grid", photo: "square", orientation: "scroll" }, P.theme || {});
+    var t = Object.assign({ preset: "paper", fonts: "editorial", radius: 2, density: "comfortable", background: "grid", photo: "square", orientation: "scroll", mode: "professional" }, P.theme || {});
 
     var toggle = el("button", { class: "dev-toggle", id: "dev-toggle", type: "button", "aria-expanded": "false", "aria-controls": "dev-panel", text: "Customise" });
     var panel = el("div", { class: "dev-panel", id: "dev-panel", role: "region", "aria-label": "Template customiser", hidden: "" });
@@ -668,6 +720,7 @@
     panel.appendChild(selField("Backdrop", ["plain", "grid", "dots", "graph"], t.background, function (v) { t.background = v; applyTheme(t); }));
     panel.appendChild(selField("Photo frame", ["square", "circle", "blob"], t.photo || "square", function (v) { t.photo = v; applyTheme(t); }));
     panel.appendChild(segField("Orientation", ["scroll", "landscape"], t.orientation || "scroll", function (v) { t.orientation = v; applyTheme(t); }));
+    panel.appendChild(segField("Mode", ["professional", "fun"], t.mode || "professional", function (v) { t.mode = v; applyTheme(t); }));
 
     var accentF = colorField("Accent", "--accent", function (v) { t.accent = v; applyTheme(t); });
     var bgF = colorField("Page colour", "--bg", function (v) { t.bg = v; applyTheme(t); });

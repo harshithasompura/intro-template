@@ -943,6 +943,72 @@ body.editing [contenteditable="true"]:focus-visible { outline: 2px solid var(--a
 }
 
 /* =============================================================================
+   TIMELINE  — a career progress line; nodes click open to reveal the story.
+   ========================================================================== */
+.l-timeline { position: relative; display: grid; gap: var(--s-3); margin: 0; }
+.l-timeline::before {
+  content: ""; position: absolute; left: 11px; top: 12px; bottom: 12px;
+  width: 2px; background: var(--hairline);
+}
+.tl-item { position: relative; padding-left: 2.4rem; }
+.tl-node {
+  display: grid; grid-template-columns: auto auto 1fr; align-items: baseline;
+  gap: 0.6rem; width: 100%; text-align: left; padding: 0.2rem 0;
+  background: none; border: 0; color: inherit; font: inherit; cursor: pointer;
+}
+.tl-dot {
+  position: absolute; left: 0; top: 1px;
+  width: 24px; height: 24px; border-radius: 50%;
+  border: 2px solid var(--line); background: var(--surface);
+  display: grid; place-items: center; font-size: 0.8rem; line-height: 1;
+  transition: border-color .25s ease, background .25s ease, transform .25s ease;
+}
+.tl-item--reached .tl-dot {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 16%, var(--surface));
+  transform: scale(1.1);
+}
+.tl-year { font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted); }
+.tl-title { font-weight: 600; color: var(--ink); }
+.tl-node[aria-expanded="true"] .tl-title { color: var(--accent); }
+.tl-detail { margin: 0.15rem 0 0.2rem 0; color: var(--muted); max-width: var(--measure); }
+.tl-detail p { margin: 0; }
+
+/* =============================================================================
+   COUNTRIES  — places visited: flag grid, running count, check marks.
+   ========================================================================== */
+.l-countries__count { font-family: var(--font-mono); font-size: 0.8rem; color: var(--muted); margin: 0.5rem 0 var(--s-3); }
+.l-countries__count b { color: var(--ink); font-size: 1.1rem; }
+.l-countries {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.5rem;
+}
+.country {
+  display: flex; align-items: center; gap: 0.55rem;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--line); border-radius: calc(var(--radius) + 6px);
+  background: var(--surface);
+}
+.country__flag { font-size: 1.3rem; line-height: 1; }
+.country__name { flex: 1; }
+.country__check { color: var(--accent); font-weight: 700; }
+.country--todo { opacity: 0.55; border-style: dashed; }
+
+/* =============================================================================
+   FUN MODE  — opt-in personality: emoji, springier motion. Off by default.
+   ========================================================================== */
+.eyebrow__emoji { display: none; }
+:root[data-mode="fun"] .eyebrow__emoji { display: inline-block; margin-right: 0.4em; font-size: 1.05em; }
+@media (prefers-reduced-motion: no-preference) {
+  :root[data-mode="fun"] .section:hover .eyebrow__emoji { animation: wiggle .5s ease; }
+  :root[data-mode="fun"] .tag { transition: transform .15s ease, border-color .15s ease; }
+  :root[data-mode="fun"] .tag:hover { transform: translateY(-2px) rotate(-1.5deg); border-color: var(--accent); }
+  :root[data-mode="fun"] .country { transition: transform .15s ease, border-color .15s ease; }
+  :root[data-mode="fun"] .country:hover { transform: translateY(-2px); border-color: var(--accent); }
+  :root[data-mode="fun"] .fact:hover .fact__num { transform: scale(1.15); transition: transform .2s ease; }
+}
+@keyframes wiggle { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-12deg); } 75% { transform: rotate(12deg); } }
+
+/* =============================================================================
    ORIENTATION  — landscape turns the sections into a horizontal card deck.
    Default (scroll) is untouched; everything here is gated on data-orientation.
    ========================================================================== */

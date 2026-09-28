@@ -29,6 +29,8 @@
      links     — labelled links, some copyable (email, slack…)
      gallery   — one or more images treated as editorial material
      compact   — a dense inline list (learning, currently reading…)
+     timeline  — a career progress line; each node clicks open to its story
+     countries — places visited: a flag grid with a live count and checks
 
    Unknown layout or missing fields won't break the page — it degrades.
    ========================================================================== */
@@ -63,6 +65,7 @@ window.PROFILE = {
 
     {
       id: "currently",
+      emoji: "🛠️",
       eyebrow: "Right now",
       title: "What I'm working on",
       layout: "feature",
@@ -84,6 +87,7 @@ window.PROFILE = {
     //      directly in `content` — the section title becomes the project name.)
     {
       id: "projects",
+      emoji: "🚧",
       eyebrow: "Project",
       title: "What I’m building",
       layout: "projects",
@@ -136,6 +140,7 @@ window.PROFILE = {
 
     {
       id: "how-i-work",
+      emoji: "🤝",
       eyebrow: "Working with me",
       title: "How I work",
       layout: "list",
@@ -153,6 +158,7 @@ window.PROFILE = {
 
     {
       id: "outside",
+      emoji: "🌿",
       eyebrow: "Off the clock",
       title: "Outside work",
       layout: "tags",
@@ -169,6 +175,7 @@ window.PROFILE = {
 
     {
       id: "currently-into",
+      emoji: "📌",
       eyebrow: "This month",
       title: "Currently into",
       layout: "metadata",
@@ -187,6 +194,7 @@ window.PROFILE = {
 
     {
       id: "fun-facts",
+      emoji: "🎲",
       eyebrow: "Trivia",
       title: "A few facts",
       layout: "facts",
@@ -211,6 +219,7 @@ window.PROFILE = {
 
     {
       id: "talk-to-me",
+      emoji: "💬",
       eyebrow: "Conversation",
       title: "Ask me about",
       layout: "list",
@@ -228,6 +237,7 @@ window.PROFILE = {
 
     {
       id: "favorites",
+      emoji: "⭐",
       eyebrow: "Picks",
       title: "Favourites",
       layout: "favorites",
@@ -248,6 +258,7 @@ window.PROFILE = {
     //      predefined field. Rename it, change the layout, write whatever.
     {
       id: "collections",
+      emoji: "🗃️",
       eyebrow: "Custom",
       title: "Things I collect",
       layout: "list",
@@ -266,6 +277,7 @@ window.PROFILE = {
     // ---- A SECOND CUSTOM SECTION, different layout, to prove the point.
     {
       id: "opinion",
+      emoji: "🔥",
       eyebrow: "Custom",
       title: "A very specific opinion",
       layout: "quote",
@@ -278,6 +290,7 @@ window.PROFILE = {
 
     {
       id: "learning",
+      emoji: "🌱",
       eyebrow: "In progress",
       title: "Currently learning",
       layout: "compact",
@@ -287,8 +300,71 @@ window.PROFILE = {
       },
     },
 
+    // ---- CAREER as a progress line. layout "timeline"; each node clicks open.
+    {
+      id: "career",
+      emoji: "🧭",
+      eyebrow: "The path here",
+      title: "Career so far",
+      layout: "timeline",
+      visible: true,
+      content: {
+        milestones: [
+          { year: "2016", emoji: "🎓", title: "Graduated, then made websites nobody asked for", note: "A design degree and a stubborn habit of shipping side projects on weekends." },
+          { year: "2018", emoji: "✏️", title: "Product Designer, Kettle", note: "Learned that a design is only real once someone has to build it. Started reading the codebase." },
+          { year: "2021", emoji: "⚙️", title: "Design Engineer, Northwind", note: "Crossed the fence for good: owned the design system end to end, from Figma tokens to shipped CSS." },
+          { year: "2026", emoji: "🚀", title: "Design Engineer, Platform Interfaces", note: "Where I am now — rebuilding the component library so design and engineering finally share one source of truth." },
+        ],
+      },
+    },
+
+    // ---- EDUCATION + background. Reuses the "metadata" layout — no new code.
+    {
+      id: "education",
+      emoji: "🎓",
+      eyebrow: "Background",
+      title: "Education & the rest",
+      layout: "metadata",
+      visible: true,
+      content: {
+        rows: [
+          { label: "Degree", value: "BA Communication Design, HfG Karlsruhe" },
+          { label: "Also studied", value: "One year of CS before switching — kept the useful half" },
+          { label: "Certified", value: "Nielsen Norman UX; too many typography workshops" },
+          { label: "Languages", value: "English (native), German (working), CSS (fluent)" },
+          { label: "First computer", value: "A hand-me-down running an OS I wasn't allowed to reinstall" },
+        ],
+      },
+    },
+
+    // ---- PLACES I'VE BEEN. layout "countries"; a flag grid with a live count.
+    {
+      id: "countries",
+      emoji: "🗺️",
+      eyebrow: "On the map",
+      title: "Countries I've been to",
+      layout: "countries",
+      visible: true,
+      content: {
+        note: "Work trips, typography museums, and one very long train year. Dashed = still on the list.",
+        countries: [
+          { name: "Germany", flag: "🇩🇪" },
+          { name: "France", flag: "🇫🇷" },
+          { name: "Italy", flag: "🇮🇹" },
+          { name: "Portugal", flag: "🇵🇹" },
+          { name: "Netherlands", flag: "🇳🇱" },
+          { name: "Japan", flag: "🇯🇵" },
+          { name: "Iceland", flag: "🇮🇸" },
+          { name: "Morocco", flag: "🇲🇦" },
+          { name: "Brazil", flag: "🇧🇷", been: false },
+          { name: "Vietnam", flag: "🇻🇳", been: false },
+        ],
+      },
+    },
+
     {
       id: "links",
+      emoji: "🔗",
       eyebrow: "Find me",
       title: "Links",
       layout: "links",
@@ -316,6 +392,7 @@ window.PROFILE = {
     surface: "",            // "" → preset's card colour, or set e.g. "#FBF8F1"
     density: "comfortable", // compact | comfortable | airy
     orientation: "scroll",  // scroll (vertical) | landscape (horizontal card deck)
+    mode: "professional",   // professional | fun (emoji, timeline, springier motion)
     background: "grid",     // backdrop pattern: plain | grid | dots | graph
     photo: "square",        // avatar frame: square | circle | blob
     sectionNumbers: true,   // the "02 /" catalogue marks
