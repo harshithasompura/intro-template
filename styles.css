@@ -946,7 +946,17 @@ body.editing [contenteditable="true"]:focus-visible { outline: 2px solid var(--a
    PRINT  — the page is a document; let it print like one.
    ========================================================================== */
 @media print {
-  body::before, .dev-toggle, .dev-panel, .skip-link, .lightbox { display: none !important; }
+  body::before, .dev-toggle, .dev-panel, .skip-link, .lightbox,
+  .section-nav, .edit-banner, .avatar__hint, .media__hint,
+  .l-projects__add, .l-project__remove, .deck-arrows { display: none !important; }
   .section { break-inside: avoid; }
   a { text-decoration: none; }
+  /* motion is JS-driven; force any un-revealed section visible for print */
+  .section.reveal { opacity: 1 !important; transform: none !important; }
+  /* expand every fact so the PDF carries the full text */
+  .fact__detail { display: block !important; }
+  .fact__sign { display: none !important; }
+  /* landscape deck flattens back to a printable document */
+  :root[data-orientation="landscape"] .sections { display: block; overflow: visible; }
+  :root[data-orientation="landscape"] .section { width: auto; height: auto; min-height: 0; }
 }

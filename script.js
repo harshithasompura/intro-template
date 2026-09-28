@@ -671,9 +671,11 @@
 
     var resetBtn = el("button", { type: "button", text: "Reset edits" });
     resetBtn.addEventListener("click", resetEdits);
+    var pdfBtn = el("button", { type: "button", text: "Save PDF" });
+    pdfBtn.addEventListener("click", function () { window.print(); }); // browser's print → "Save as PDF"
     var exportBtn = el("button", { class: "primary", type: "button", text: "Export HTML" });
     exportBtn.addEventListener("click", exportStandalone);
-    panel.appendChild(el("div", { class: "dev-actions" }, [resetBtn, exportBtn]));
+    panel.appendChild(el("div", { class: "dev-actions" }, [resetBtn, pdfBtn, exportBtn]));
     panel.appendChild(el("p", { class: "dev-note", text: "In-page edits and dropped photos are saved in this browser and baked into the export. Theme and colour tweaks are a preview; save them in profile.js. Export is one static .html that works with JavaScript off." }));
 
     toggle.addEventListener("click", function () {
