@@ -315,6 +315,7 @@ window.PROFILE = {
     bg: "",                 // "" → preset's page colour, or set e.g. "#EFE9DA"
     surface: "",            // "" → preset's card colour, or set e.g. "#FBF8F1"
     density: "comfortable", // compact | comfortable | airy
+    orientation: "scroll",  // scroll (vertical) | landscape (horizontal card deck)
     background: "grid",     // backdrop pattern: plain | grid | dots | graph
     photo: "square",        // avatar frame: square | circle | blob
     sectionNumbers: true,   // the "02 /" catalogue marks

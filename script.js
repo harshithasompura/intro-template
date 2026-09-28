@@ -43,6 +43,7 @@
     root.setAttribute("data-density", t.density || "comfortable");
     root.setAttribute("data-bg", t.background || "grid");
     root.setAttribute("data-photo", t.photo || "square");
+    root.setAttribute("data-orientation", t.orientation || "scroll");
     // per-profile colour overrides (blank → fall back to the preset's value)
     setVar(root, "--accent", t.accent);
     setVar(root, "--bg", t.bg);
@@ -540,6 +541,32 @@
   buildDevPanel();
   wireMotion();
   buildSectionNav();
+  buildDeckArrows();
+
+  /* ---- landscape deck: ‹ › page through the section cards ------------------
+     Hidden by CSS unless data-orientation="landscape". Scrolls the horizontal
+     .sections track one card at a time; the dot rail still jumps directly. */
+  function buildDeckArrows() {
+    var track = document.querySelector(".sections");
+    if (!track) return;
+    function go(dir) {
+      var cards = [].slice.call(track.querySelectorAll(".section")).filter(function (s) { return s.offsetParent !== null; });
+      if (!cards.length) return;
+      var mid = window.innerWidth / 2, idx = 0, best = Infinity;
+      cards.forEach(function (c, i) {
+        var r = c.getBoundingClientRect();
+        var d = Math.abs((r.left + r.right) / 2 - mid);
+        if (d < best) { best = d; idx = i; }
+      });
+      idx = Math.max(0, Math.min(cards.length - 1, idx + dir));
+      cards[idx].scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    }
+    var prev = el("button", { type: "button", "aria-label": "Previous card", text: "‹" });
+    var next = el("button", { type: "button", "aria-label": "Next card", text: "›" });
+    prev.addEventListener("click", function () { go(-1); });
+    next.addEventListener("click", function () { go(1); });
+    document.body.appendChild(el("div", { class: "deck-arrows" }, [prev, next]));
+  }
 
   /* ---- section navigation: smooth scroll + active dot ---------------------- */
   function buildSectionNav() {
@@ -601,7 +628,7 @@
      Development-only. Delete this whole function to remove it entirely.
      ======================================================================== */
   function buildDevPanel() {
-    var t = Object.assign({ preset: "paper", fonts: "editorial", radius: 2, density: "comfortable", background: "grid", photo: "square" }, P.theme || {});
+    var t = Object.assign({ preset: "paper", fonts: "editorial", radius: 2, density: "comfortable", background: "grid", photo: "square", orientation: "scroll" }, P.theme || {});
 
     var toggle = el("button", { class: "dev-toggle", id: "dev-toggle", type: "button", "aria-expanded": "false", "aria-controls": "dev-panel", text: "Customise" });
     var panel = el("div", { class: "dev-panel", id: "dev-panel", role: "region", "aria-label": "Template customiser", hidden: "" });
@@ -640,6 +667,7 @@
     panel.appendChild(segField("Density", ["compact", "comfortable", "airy"], t.density, function (v) { t.density = v; applyTheme(t); }));
     panel.appendChild(selField("Backdrop", ["plain", "grid", "dots", "graph"], t.background, function (v) { t.background = v; applyTheme(t); }));
     panel.appendChild(selField("Photo frame", ["square", "circle", "blob"], t.photo || "square", function (v) { t.photo = v; applyTheme(t); }));
+    panel.appendChild(segField("Orientation", ["scroll", "landscape"], t.orientation || "scroll", function (v) { t.orientation = v; applyTheme(t); }));
 
     var accentF = colorField("Accent", "--accent", function (v) { t.accent = v; applyTheme(t); });
     var bgF = colorField("Page colour", "--bg", function (v) { t.bg = v; applyTheme(t); });
@@ -721,7 +749,7 @@
       var map = {}; res[1].forEach(function (x) { if (x) map[x.src] = x.data; });
 
       var clone = document.documentElement.cloneNode(true);
-      clone.querySelectorAll("script, noscript, #dev-toggle, #dev-panel, .lightbox, #edit-banner, .section-nav, .l-projects__add, .l-project__remove, .avatar__hint, .avatar input[type=file], .media__hint, .media input[type=file]").forEach(function (n) { n.remove(); });
+      clone.querySelectorAll("script, noscript, #dev-toggle, #dev-panel, .lightbox, #edit-banner, .section-nav, .deck-arrows, .l-projects__add, .l-project__remove, .avatar__hint, .avatar input[type=file], .media__hint, .media input[type=file]").forEach(function (n) { n.remove(); });
       clone.querySelectorAll(".is-drop").forEach(function (n) { n.classList.remove("is-drop"); });
       // freeze in-place edits into static text
       clone.querySelectorAll("[contenteditable]").forEach(function (n) { n.removeAttribute("contenteditable"); });
