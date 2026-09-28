@@ -599,10 +599,11 @@
      Hidden by CSS unless data-orientation="landscape". Scrolls the horizontal
      .sections track one card at a time; the dot rail still jumps directly. */
   function buildDeckArrows() {
-    var track = document.querySelector(".sections");
-    if (!track) return;
+    if (!document.querySelector(".sections")) return;
     function go(dir) {
-      var cards = [].slice.call(track.querySelectorAll(".section")).filter(function (s) { return s.offsetParent !== null; });
+      // panels = masthead first, then every visible section, in document order
+      var cards = [].slice.call(document.querySelectorAll(".masthead, .sections > .section"))
+        .filter(function (s) { return s.offsetParent !== null; });
       if (!cards.length) return;
       var mid = window.innerWidth / 2, idx = 0, best = Infinity;
       cards.forEach(function (c, i) {

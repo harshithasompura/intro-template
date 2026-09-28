@@ -945,19 +945,30 @@ body.editing [contenteditable="true"]:focus-visible { outline: 2px solid var(--a
 /* =============================================================================
    TIMELINE  — a career progress line; nodes click open to reveal the story.
    ========================================================================== */
-.l-timeline { position: relative; display: grid; gap: var(--s-3); margin: 0; }
-.l-timeline::before {
-  content: ""; position: absolute; left: 11px; top: 12px; bottom: 12px;
-  width: 2px; background: var(--hairline);
+.l-timeline {
+  position: relative; margin: 0;
+  display: flex; flex-direction: row; flex-wrap: nowrap;
+  gap: var(--s-4);
+  overflow-x: auto; scroll-snap-type: x proximity;
+  padding: 0 0 var(--s-2);
+  scrollbar-width: thin;
 }
-.tl-item { position: relative; padding-left: 2.4rem; }
+/* the progress line runs horizontally through the dot centres */
+.l-timeline::before {
+  content: ""; position: absolute; top: 11px; left: 12px; right: 12px;
+  height: 2px; background: var(--hairline);
+}
+.tl-item {
+  position: relative; flex: 0 0 clamp(180px, 22vw, 240px);
+  padding-top: 2.4rem; scroll-snap-align: start;
+}
 .tl-node {
-  display: grid; grid-template-columns: auto auto 1fr; align-items: baseline;
-  gap: 0.6rem; width: 100%; text-align: left; padding: 0.2rem 0;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 0.25rem;
+  width: 100%; text-align: left; padding: 0;
   background: none; border: 0; color: inherit; font: inherit; cursor: pointer;
 }
 .tl-dot {
-  position: absolute; left: 0; top: 1px;
+  position: absolute; top: 0; left: 0;
   width: 24px; height: 24px; border-radius: 50%;
   border: 2px solid var(--line); background: var(--surface);
   display: grid; place-items: center; font-size: 0.8rem; line-height: 1;
@@ -969,9 +980,9 @@ body.editing [contenteditable="true"]:focus-visible { outline: 2px solid var(--a
   transform: scale(1.1);
 }
 .tl-year { font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted); }
-.tl-title { font-weight: 600; color: var(--ink); }
+.tl-title { font-weight: 600; color: var(--ink); line-height: 1.25; }
 .tl-node[aria-expanded="true"] .tl-title { color: var(--accent); }
-.tl-detail { margin: 0.15rem 0 0.2rem 0; color: var(--muted); max-width: var(--measure); }
+.tl-detail { margin: 0.4rem 0 0; color: var(--muted); font-size: 0.92rem; }
 .tl-detail p { margin: 0; }
 
 /* =============================================================================
@@ -980,17 +991,24 @@ body.editing [contenteditable="true"]:focus-visible { outline: 2px solid var(--a
 .l-countries__count { font-family: var(--font-mono); font-size: 0.8rem; color: var(--muted); margin: 0.5rem 0 var(--s-3); }
 .l-countries__count b { color: var(--ink); font-size: 1.1rem; }
 .l-countries {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.5rem;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 0.6rem;
 }
 .country {
-  display: flex; align-items: center; gap: 0.55rem;
-  padding: 0.5rem 0.7rem;
+  display: flex; align-items: center; gap: 0.6rem;
+  min-height: 2.9rem; padding: 0.55rem 0.8rem;
   border: 1px solid var(--line); border-radius: calc(var(--radius) + 6px);
   background: var(--surface);
 }
-.country__flag { font-size: 1.3rem; line-height: 1; }
-.country__name { flex: 1; }
-.country__check { color: var(--accent); font-weight: 700; }
+.country__flag {
+  flex: 0 0 1.6em; width: 1.6em; text-align: center;
+  font-size: 1.35rem; line-height: 1;
+}
+.country__name { flex: 1 1 auto; min-width: 0; }
+.country__check {
+  flex: 0 0 auto; margin-left: 0.35rem;
+  color: var(--accent); font-weight: 700; font-size: 0.95rem;
+}
 .country--todo { opacity: 0.55; border-style: dashed; }
 
 /* =============================================================================
@@ -1009,33 +1027,44 @@ body.editing [contenteditable="true"]:focus-visible { outline: 2px solid var(--a
 @keyframes wiggle { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-12deg); } 75% { transform: rotate(12deg); } }
 
 /* =============================================================================
-   ORIENTATION  — landscape turns the sections into a horizontal card deck.
-   Default (scroll) is untouched; everything here is gated on data-orientation.
+   ORIENTATION  — landscape turns the WHOLE site horizontal: the masthead is
+   the first full-height panel, every section is a panel after it, and the page
+   scrolls sideways as one deck. Default (scroll) is untouched.
    ========================================================================== */
-:root[data-orientation="landscape"] .sections {
-  flex-direction: row;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  gap: var(--s-5);
-  padding-bottom: var(--s-4);
+:root[data-orientation="landscape"] { height: 100%; }
+:root[data-orientation="landscape"] body { height: 100vh; overflow: hidden; }
+
+/* the page becomes the horizontal scroll track */
+:root[data-orientation="landscape"] .page {
+  max-width: none; width: 100vw; height: 100vh; margin: 0; padding: 0;
+  display: flex; flex-direction: row; flex-wrap: nowrap;
+  overflow-x: auto; overflow-y: hidden;
   scroll-snap-type: x mandatory;
-  scroll-padding-inline: var(--gutter);
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
 }
+/* internal chrome doesn't belong in a horizontal deck */
+:root[data-orientation="landscape"] .docrule,
+:root[data-orientation="landscape"] .colophon { display: none; }
+
+/* unwrap the sections list so its cards join the page's horizontal flow */
+:root[data-orientation="landscape"] .sections { display: contents; }
+
+/* masthead + every section are equal full-viewport panels */
+:root[data-orientation="landscape"] .masthead,
 :root[data-orientation="landscape"] .section {
-  flex: 0 0 auto;
-  width: min(760px, 88vw);
-  max-height: 78vh;
+  flex: 0 0 100vw; width: 100vw; height: 100vh;
+  margin: 0; border: 0;
+  padding: var(--s-5) var(--gutter) var(--s-6);
   overflow-y: auto;
-  padding: var(--s-5);
-  border: 1px solid var(--line);
-  border-top: 1px solid var(--line);
-  border-radius: calc(var(--radius) + 12px);
-  background: var(--surface);
-  scroll-snap-align: center;
+  scroll-snap-align: start;
+  display: flex; flex-direction: column; justify-content: safe center;
 }
+:root[data-orientation="landscape"] .masthead > .masthead__grid { width: 100%; max-width: var(--maxw); margin: 0 auto; }
+:root[data-orientation="landscape"] .section > * { width: 100%; max-width: var(--maxw); margin-inline: auto; }
 :root[data-orientation="landscape"] .section:first-child { padding-top: var(--s-5); }
+/* a hidden section (customiser) must not leave a blank panel */
+:root[data-orientation="landscape"] .section[style*="display: none"] { display: none !important; }
 
 /* prev / next pager — only shown in landscape */
 .deck-arrows { display: none; }
@@ -1058,7 +1087,13 @@ body.editing [contenteditable="true"]:focus-visible { outline: 2px solid var(--a
    PRINT  — the page is a document; let it print like one.
    ========================================================================== */
 @media print {
-  body::before, .dev-toggle, .dev-panel, .skip-link, .lightbox,
+  /* keep the theme's colours in the PDF — browsers drop backgrounds otherwise */
+  :root, body, .page, .section, .masthead {
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  body { background: var(--bg) !important; }
+
+  .dev-toggle, .dev-panel, .skip-link, .lightbox,
   .section-nav, .edit-banner, .avatar__hint, .media__hint,
   .l-projects__add, .l-project__remove, .deck-arrows { display: none !important; }
   .section { break-inside: avoid; }
@@ -1068,7 +1103,19 @@ body.editing [contenteditable="true"]:focus-visible { outline: 2px solid var(--a
   /* expand every fact so the PDF carries the full text */
   .fact__detail { display: block !important; }
   .fact__sign { display: none !important; }
-  /* landscape deck flattens back to a printable document */
-  :root[data-orientation="landscape"] .sections { display: block; overflow: visible; }
-  :root[data-orientation="landscape"] .section { width: auto; height: auto; min-height: 0; }
+
+  /* landscape deck flattens back to a vertical printable document */
+  :root[data-orientation="landscape"] body { height: auto; overflow: visible; }
+  :root[data-orientation="landscape"] .page {
+    display: block; width: auto; height: auto;
+    overflow: visible; padding: var(--s-4) var(--gutter);
+  }
+  :root[data-orientation="landscape"] .docrule,
+  :root[data-orientation="landscape"] .colophon { display: flex; }
+  :root[data-orientation="landscape"] .sections { display: flex; flex-direction: column; }
+  :root[data-orientation="landscape"] .masthead,
+  :root[data-orientation="landscape"] .section {
+    width: auto; height: auto; min-height: 0; overflow: visible;
+    display: block; padding-inline: 0;
+  }
 }
