@@ -659,6 +659,10 @@
         var node = [].slice.call(document.querySelectorAll(".section__title")).filter(function (h) { return h.id === "sec-" + s.id; })[0];
         var sec = node ? node.closest(".section") : null;
         if (sec) sec.style.display = cb.checked ? "" : "none";
+        // keep the dot rail in sync — a hidden section has no dot
+        var dot = document.querySelector('.section-nav a[href="#' + s.id + '"]');
+        var li = dot ? dot.closest("li") : null;
+        if (li) li.hidden = !cb.checked;
       });
       visWrap.appendChild(el("label", null, [cb, document.createTextNode(s.title || s.id)]));
     });
