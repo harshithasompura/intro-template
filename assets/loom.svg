@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 600" role="img" aria-label="Loom token browser: a grid of colour tokens with names, and a spacing scale.">
+  <defs>
+    <style>
+      .bg{fill:#F8F6F0}
+      .ink{fill:#1c1b18}
+      .mut{fill:#8a857a}
+      .line{stroke:#d9d3c6;stroke-width:1}
+      .lbl{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px}
+      .h{font-family:'Fraunces',Georgia,serif;font-size:22px;fill:#1c1b18}
+      .tny{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:9.5px;fill:#8a857a}
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="840" height="600"/>
+
+  <!-- header -->
+  <text class="h" x="40" y="58">Loom</text>
+  <text class="tny" x="98" y="58">TOKENS / v3</text>
+  <line class="line" x1="40" y1="78" x2="800" y2="78"/>
+  <text class="tny" x="40" y="98">COLOR — SEMANTIC</text>
+
+  <!-- color token grid -->
+  <g>
+    <!-- row 1 -->
+    <g transform="translate(40,112)">
+      <rect width="168" height="86" rx="2" fill="#5D45B8"/>
+      <text class="lbl" x="0" y="104" fill="#1c1b18">accent.default</text>
+      <text class="tny" x="0" y="118">#5D45B8</text>
+    </g>
+    <g transform="translate(238,112)">
+      <rect width="168" height="86" rx="2" fill="#171717"/>
+      <text class="lbl" x="0" y="104" fill="#1c1b18">ink.strong</text>
+      <text class="tny" x="0" y="118">#171717</text>
+    </g>
+    <g transform="translate(436,112)">
+      <rect width="168" height="86" rx="2" fill="#6F6B63"/>
+      <text class="lbl" x="0" y="104" fill="#1c1b18">ink.muted</text>
+      <text class="tny" x="0" y="118">#6F6B63</text>
+    </g>
+    <g transform="translate(634,112)">
+      <rect width="166" height="86" rx="2" fill="#F3F0E8" stroke="#d9d3c6"/>
+      <text class="lbl" x="0" y="104" fill="#1c1b18">surface.page</text>
+      <text class="tny" x="0" y="118">#F3F0E8</text>
+    </g>
+  </g>
+
+  <!-- row 2 -->
+  <g>
+    <g transform="translate(40,246)">
+      <rect width="168" height="86" rx="2" fill="#9A3428"/>
+      <text class="lbl" x="0" y="104" fill="#1c1b18">state.error</text>
+      <text class="tny" x="0" y="118">#9A3428</text>
+    </g>
+    <g transform="translate(238,246)">
+      <rect width="168" height="86" rx="2" fill="#315C55"/>
+      <text class="lbl" x="0" y="104" fill="#1c1b18">state.ok</text>
+      <text class="tny" x="0" y="118">#315C55</text>
+    </g>
+    <g transform="translate(436,246)">
+      <rect width="168" height="86" rx="2" fill="#C9C4B8"/>
+      <text class="lbl" x="0" y="104" fill="#1c1b18">line.default</text>
+      <text class="tny" x="0" y="118">#C9C4B8</text>
+    </g>
+    <g transform="translate(634,246)">
+      <rect width="166" height="86" rx="2" fill="#F8F6F0" stroke="#d9d3c6"/>
+      <text class="lbl" x="0" y="104" fill="#1c1b18">surface.raised</text>
+      <text class="tny" x="0" y="118">#F8F6F0</text>
+    </g>
+  </g>
+
+  <!-- spacing scale -->
+  <text class="tny" x="40" y="404">SPACING — SCALE (rem)</text>
+  <g transform="translate(40,420)">
+    <g>
+      <rect x="0" y="0" width="12" height="18" fill="#5D45B8"/><text class="tny" x="0" y="34">0.5</text>
+    </g>
+    <g transform="translate(70,0)">
+      <rect x="0" y="0" width="20" height="18" fill="#5D45B8"/><text class="tny" x="0" y="34">0.75</text>
+    </g>
+    <g transform="translate(150,0)">
+      <rect x="0" y="0" width="28" height="18" fill="#5D45B8"/><text class="tny" x="0" y="34">1.0</text>
+    </g>
+    <g transform="translate(240,0)">
+      <rect x="0" y="0" width="44" height="18" fill="#5D45B8"/><text class="tny" x="0" y="34">1.5</text>
+    </g>
+    <g transform="translate(360,0)">
+      <rect x="0" y="0" width="72" height="18" fill="#5D45B8"/><text class="tny" x="0" y="34">2.25</text>
+    </g>
+    <g transform="translate(520,0)">
+      <rect x="0" y="0" width="112" height="18" fill="#5D45B8"/><text class="tny" x="0" y="34">3.5</text>
+    </g>
+  </g>
+
+  <line class="line" x1="40" y1="500" x2="800" y2="500"/>
+  <text class="tny" x="40" y="524">42 tokens · 4 teams · generated from figma variables</text>
+  <text class="tny" x="640" y="524">build: passing</text>
+  <circle cx="628" cy="520" r="4" fill="#315C55"/>
+</svg>
