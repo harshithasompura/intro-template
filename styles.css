@@ -128,11 +128,9 @@
 html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 .section, .masthead { scroll-margin-top: var(--s-4); }
-/* gentle section-wise "stop": snaps when you settle near a boundary, never traps */
-@media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
-  html { scroll-snap-type: y proximity; }
-  .masthead, .section { scroll-snap-align: start; scroll-snap-stop: normal; }
-}
+/* no vertical scroll-snap: it fought in-place editing near the header,
+   yanking the page back to the masthead as contenteditable changed heights.
+   (Landscape orientation opts back into snap on the x-axis — see below.) */
 body {
   margin: 0;
   background: var(--bg);
