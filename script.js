@@ -49,6 +49,7 @@
     setVar(root, "--accent", t.accent);
     setVar(root, "--bg", t.bg);
     setVar(root, "--surface", t.surface);
+    setVar(root, "--sections-bg", t.sectionsBg);
   }
   function setVar(root, name, val) {
     if (val) root.style.setProperty(name, val);
@@ -726,10 +727,12 @@
     var accentF = colorField("Accent", "--accent", function (v) { t.accent = v; applyTheme(t); });
     var bgF = colorField("Page colour", "--bg", function (v) { t.bg = v; applyTheme(t); });
     var surfF = colorField("Card colour", "--surface", function (v) { t.surface = v; applyTheme(t); });
-    colorInputs = [accentF, bgF, surfF];
+    var secF = colorField("Sections background", "--sections-bg", function (v) { t.sectionsBg = v; applyTheme(t); });
+    colorInputs = [accentF, bgF, surfF, secF];
     panel.appendChild(accentF.field);
     panel.appendChild(bgF.field);
     panel.appendChild(surfF.field);
+    panel.appendChild(secF.field);
 
     panel.appendChild(segField("Edit text", ["off", "on"], "off", function (v) { toggleEdit(v === "on"); }));
 

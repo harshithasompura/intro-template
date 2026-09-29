@@ -343,7 +343,11 @@ body::before {
 /* =============================================================================
    SECTION SHELL
    ========================================================================== */
-.sections { display: flex; flex-direction: column; }
+/* --sections-bg: a solid backdrop behind every section, so a calm colour can
+   cover the (optional) page pattern in the reading column. Blank → transparent.
+   ponytail: painted in scroll orientation; landscape flattens .sections to
+   display:contents, so set the page colour there instead if you need it. */
+.sections { display: flex; flex-direction: column; background: var(--sections-bg, transparent); }
 .section {
   padding: var(--s-7) 0;
   border-top: 1px solid var(--line);
