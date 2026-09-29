@@ -28,7 +28,19 @@
     </div>
   </noscript>
 
-  <script src="profile.js"></script>
-  <script src="script.js" defer></script>
+  <!-- Authoring includes are cache-busted so profile.js edits (removing a section,
+       flipping visible:false) always show on reload instead of a stale cached copy.
+       Export strips every <script> and the nav rail, so shared output is unaffected. -->
+  <script>
+    (function () {
+      var v = Date.now();
+      function load(src, next) {
+        var s = document.createElement("script");
+        s.src = src + "?v=" + v; s.onload = next || null;
+        document.body.appendChild(s);
+      }
+      load("profile.js", function () { load("script.js"); });
+    })();
+  </script>
 </body>
 </html>
