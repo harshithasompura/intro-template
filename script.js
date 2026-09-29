@@ -50,6 +50,7 @@
     setVar(root, "--bg", t.bg);
     setVar(root, "--surface", t.surface);
     setVar(root, "--sections-bg", t.sectionsBg);
+    setVar(root, "--ink", t.text);
   }
   function setVar(root, name, val) {
     if (val) root.style.setProperty(name, val);
@@ -716,7 +717,7 @@
 
     panel.appendChild(el("h3", { text: "Template" }));
     // picking a preset clears any custom colours so the preset shows through
-    panel.appendChild(selField("Theme", ["paper", "archive", "technical", "dark"], t.preset, function (v) { t.preset = v; t.accent = t.bg = t.surface = ""; applyTheme(t); syncColors(); }));
+    panel.appendChild(selField("Theme", ["paper", "archive", "technical", "dark"], t.preset, function (v) { t.preset = v; t.accent = t.bg = t.surface = t.text = ""; applyTheme(t); syncColors(); }));
     panel.appendChild(selField("Fonts", ["editorial", "grotesk", "humanist", "classic", "display", "archivo"], t.fonts, function (v) { t.fonts = v; applyTheme(t); }));
     panel.appendChild(segField("Density", ["compact", "comfortable", "airy"], t.density, function (v) { t.density = v; applyTheme(t); }));
     panel.appendChild(selField("Backdrop", ["plain", "grid", "dots", "graph"], t.background, function (v) { t.background = v; applyTheme(t); }));
@@ -727,12 +728,14 @@
     var accentF = colorField("Accent", "--accent", function (v) { t.accent = v; applyTheme(t); });
     var bgF = colorField("Page colour", "--bg", function (v) { t.bg = v; applyTheme(t); });
     var surfF = colorField("Card colour", "--surface", function (v) { t.surface = v; applyTheme(t); });
-    var secF = colorField("Sections background", "--sections-bg", function (v) { t.sectionsBg = v; applyTheme(t); });
-    colorInputs = [accentF, bgF, surfF, secF];
+    var secF = colorField("Content background", "--sections-bg", function (v) { t.sectionsBg = v; applyTheme(t); });
+    var textF = colorField("Text colour", "--ink", function (v) { t.text = v; applyTheme(t); });
+    colorInputs = [accentF, bgF, surfF, secF, textF];
     panel.appendChild(accentF.field);
     panel.appendChild(bgF.field);
     panel.appendChild(surfF.field);
     panel.appendChild(secF.field);
+    panel.appendChild(textF.field);
 
     panel.appendChild(segField("Edit text", ["off", "on"], "off", function (v) { toggleEdit(v === "on"); }));
 

@@ -222,7 +222,12 @@ body::before {
   z-index: 1;
   max-width: var(--maxw);
   margin: 0 auto;
-  padding: var(--s-4) var(--gutter) var(--s-7);
+  /* extra inline padding so the (optional) --sections-bg panel breathes around
+     the content instead of sitting flush against the intro and section text. */
+  padding: var(--s-4) max(var(--gutter), var(--s-6)) var(--s-7);
+  /* solid backdrop behind the whole content column — intro + sections — so a
+     calm colour can cover the page pattern. Blank → transparent (no change). */
+  background: var(--sections-bg, transparent);
 }
 
 /* 12-col grid used by masthead and any layout that opts in. */
@@ -343,11 +348,7 @@ body::before {
 /* =============================================================================
    SECTION SHELL
    ========================================================================== */
-/* --sections-bg: a solid backdrop behind every section, so a calm colour can
-   cover the (optional) page pattern in the reading column. Blank → transparent.
-   ponytail: painted in scroll orientation; landscape flattens .sections to
-   display:contents, so set the page colour there instead if you need it. */
-.sections { display: flex; flex-direction: column; background: var(--sections-bg, transparent); }
+.sections { display: flex; flex-direction: column; }
 .section {
   padding: var(--s-7) 0;
   border-top: 1px solid var(--line);

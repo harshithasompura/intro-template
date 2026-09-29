@@ -390,7 +390,8 @@ window.PROFILE = {
     accent: "",             // "" → preset's accent, or set e.g. "#9A3428"
     bg: "",                 // "" → preset's page colour, or set e.g. "#EFE9DA"
     surface: "",            // "" → preset's card colour, or set e.g. "#FBF8F1"
-    sectionsBg: "",         // "" → transparent; set a solid colour behind all sections to calm the backdrop
+    sectionsBg: "",         // "" → transparent; solid colour behind the whole content column (intro + sections)
+    text: "",               // "" → preset's text colour, or set e.g. "#1B1B1B"
     density: "comfortable", // compact | comfortable | airy
     orientation: "scroll",  // scroll (vertical) | landscape (horizontal card deck)
     mode: "professional",   // professional | fun (emoji, timeline, springier motion)
