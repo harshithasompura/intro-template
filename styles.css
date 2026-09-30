@@ -971,7 +971,9 @@ body.editing [contenteditable="true"]:focus-visible { outline: 2px solid var(--a
   display: flex; flex-direction: column; align-items: flex-start; gap: 0.25rem;
   width: 100%; text-align: left; padding: 0;
   background: none; border: 0; color: inherit; font: inherit; cursor: pointer;
+  list-style: none;
 }
+.tl-node::-webkit-details-marker { display: none; }
 .tl-dot {
   position: absolute; top: 0; left: 0;
   width: 24px; height: 24px; border-radius: 50%;
@@ -979,14 +981,15 @@ body.editing [contenteditable="true"]:focus-visible { outline: 2px solid var(--a
   display: grid; place-items: center; font-size: 0.8rem; line-height: 1;
   transition: border-color .25s ease, background .25s ease, transform .25s ease;
 }
-.tl-item--reached .tl-dot {
+.tl-details[open] .tl-dot {
   border-color: var(--accent);
   background: color-mix(in srgb, var(--accent) 16%, var(--surface));
   transform: scale(1.1);
 }
 .tl-year { font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted); }
 .tl-title { font-weight: 600; color: var(--ink); line-height: 1.25; }
-.tl-node[aria-expanded="true"] .tl-title { color: var(--accent); }
+.tl-details[open] .tl-title { color: var(--accent); }
+.tl-details:not([open]) .tl-detail { display: none; }
 .tl-detail { margin: 0.4rem 0 0; color: var(--muted); font-size: 0.92rem; }
 .tl-detail p { margin: 0; }
 

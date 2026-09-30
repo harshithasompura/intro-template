@@ -215,14 +215,17 @@
     timeline: function (c) {
       var items = c.milestones || c.items || [];
       var line = el("ol", { class: "l-timeline" }, items.map(function (m) {
-        var node = el("button", { class: "tl-node", type: "button", "aria-expanded": "false" }, [
+        var summary = el("summary", { class: "tl-node" }, [
           el("span", { class: "tl-dot", "aria-hidden": "true", text: m.emoji || "" }),
           el("span", { class: "tl-year", text: m.year || "" }),
           el("span", { class: "tl-title", text: m.title || "" })
         ]);
-        var detail = m.note ? el("div", { class: "tl-detail", hidden: "" }, el("p", { text: m.note })) : null;
-        if (!m.note) node.style.cursor = "default";
-        return el("li", { class: "tl-item" }, [node, detail]);
+        var d = el("details", { class: "tl-details" }, [
+          summary,
+          m.note ? el("div", { class: "tl-detail" }, el("p", { text: m.note })) : null
+        ]);
+        if (!m.note) summary.style.cursor = "default";
+        return el("li", { class: "tl-item" }, d);
       }));
       return el("div", { class: "l-timeline-wrap" }, line);
     },
@@ -399,19 +402,6 @@
     var t = e.target;
     var cp = t.closest && t.closest(".copy-btn");
     if (cp) { e.preventDefault(); copy(cp.getAttribute("data-copy"), cp); return; }
-    // timeline node: click to walk the journey (reveal its story, light the dot)
-    var tn = t.closest && t.closest(".tl-node");
-    if (tn && !editing()) {
-      var li = tn.closest(".tl-item");
-      var det = li && li.querySelector(".tl-detail");
-      if (det) {
-        var open = tn.getAttribute("aria-expanded") === "true";
-        tn.setAttribute("aria-expanded", String(!open));
-        li.classList.toggle("tl-item--reached", !open);
-        det.hidden = open;
-      }
-      return;
-    }
     // add a project (edit mode)
     var addBtn = t.closest && t.closest(".l-projects__add");
     if (addBtn) {
