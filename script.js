@@ -214,19 +214,10 @@
     // career as a progress line; each node clicks open to tell its story
     timeline: function (c) {
       var items = c.milestones || c.items || [];
-      var line = el("ol", { class: "l-timeline" }, items.map(function (m) {
-        var summary = el("summary", { class: "tl-node" }, [
-          el("span", { class: "tl-dot", "aria-hidden": "true", text: m.emoji || "" }),
-          el("span", { class: "tl-year", text: m.year || "" }),
-          el("span", { class: "tl-title", text: m.title || "" })
-        ]);
-        var d = el("details", { class: "tl-details" }, [
-          summary,
-          m.note ? el("div", { class: "tl-detail" }, el("p", { text: m.note })) : null
-        ]);
-        if (!m.note) summary.style.cursor = "default";
-        return el("li", { class: "tl-item" }, d);
-      }));
+      var line = el("ol", { class: "l-timeline" }, items.map(milestoneItem));
+      // "Add milestone" appears only in edit mode (styled in CSS)
+      line.appendChild(el("li", { class: "tl-item tl-item--add" },
+        el("button", { class: "l-timeline__add", type: "button", "aria-label": "Add a milestone", text: "+  Add milestone" })));
       return el("div", { class: "l-timeline-wrap" }, line);
     },
 
@@ -261,6 +252,26 @@
 
   var PLACEHOLDER_IMG = "data:image/svg+xml," + encodeURIComponent(
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 560"><rect width="800" height="560" fill="#efece4"/><text x="400" y="290" font-family="ui-monospace,monospace" font-size="24" fill="#9a958a" text-anchor="middle">Drop or click to add a photo</text></svg>');
+
+  function milestoneItem(m) {
+    m = m || {};
+    var summary = el("summary", { class: "tl-node" }, [
+      el("span", { class: "tl-dot", "aria-hidden": "true", text: m.emoji || "" }),
+      el("span", { class: "tl-year", text: m.year || "" }),
+      el("span", { class: "tl-title", text: m.title || "" })
+    ]);
+    var d = el("details", { class: "tl-details" }, [
+      summary,
+      el("div", { class: "tl-detail" }, el("p", { text: m.note || "" }))
+    ]);
+    var li = el("li", { class: "tl-item" }, d);
+    // remove control (shown in edit mode via CSS)
+    li.appendChild(el("button", { class: "tl-item__remove", type: "button", "aria-label": "Remove this milestone", title: "Remove milestone", text: "✕" }));
+    return li;
+  }
+  function newMilestoneData() {
+    return { emoji: "•", year: "Year", title: "What happened", note: "The story behind it. Click to edit." };
+  }
 
   function newProjectData() {
     return {
@@ -421,6 +432,25 @@
       if (pg) { pg.remove(); persistEdits(); }
       return;
     }
+    // add a timeline milestone (edit mode)
+    var addMs = t.closest && t.closest(".l-timeline__add");
+    if (addMs) {
+      e.preventDefault();
+      var item = milestoneItem(newMilestoneData());
+      addMs.closest(".tl-item--add").before(item);
+      if (editing()) item.querySelectorAll(EDITABLE).forEach(function (n) { n.setAttribute("contenteditable", "true"); });
+      persistEdits();
+      item.scrollIntoView({ block: "center", inline: "center" });
+      return;
+    }
+    // remove a timeline milestone (edit mode)
+    var rmMs = t.closest && t.closest(".tl-item__remove");
+    if (rmMs) {
+      e.preventDefault();
+      var msItem = rmMs.closest(".tl-item");
+      if (msItem) { msItem.remove(); persistEdits(); }
+      return;
+    }
     // avatar: replace photo anytime
     var av = t.closest && t.closest(".avatar");
     if (av) { if (t.matches("input")) return; var ai = av.querySelector("input[type=file]"); if (ai) ai.click(); return; }
@@ -490,7 +520,7 @@
     ".l-compact li",
     ".l-project__name", ".l-project__summary", ".spec dt", ".spec dd",
     ".project-notes li", ".chip", ".media figcaption",
-    ".tl-year", ".tl-title", ".tl-detail p", ".country__name",
+    ".tl-dot", ".tl-year", ".tl-title", ".tl-detail p", ".country__name",
     ".colophon span"
   ].join(",");
 
@@ -799,7 +829,7 @@
       var map = {}; res[1].forEach(function (x) { if (x) map[x.src] = x.data; });
 
       var clone = document.documentElement.cloneNode(true);
-      clone.querySelectorAll("script, noscript, #dev-toggle, #dev-panel, .lightbox, #edit-banner, .section-nav, .deck-arrows, .l-projects__add, .l-project__remove, .avatar__hint, .avatar input[type=file], .media__hint, .media input[type=file]").forEach(function (n) { n.remove(); });
+      clone.querySelectorAll("script, noscript, #dev-toggle, #dev-panel, .lightbox, #edit-banner, .section-nav, .deck-arrows, .l-projects__add, .l-project__remove, .l-timeline__add, .tl-item--add, .tl-item__remove, .avatar__hint, .avatar input[type=file], .media__hint, .media input[type=file]").forEach(function (n) { n.remove(); });
       clone.querySelectorAll(".is-drop").forEach(function (n) { n.classList.remove("is-drop"); });
       // freeze in-place edits into static text
       clone.querySelectorAll("[contenteditable]").forEach(function (n) { n.removeAttribute("contenteditable"); });
