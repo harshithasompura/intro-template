@@ -1,4 +1,4 @@
-# Introduction - a reusable team intro one-pager
+# Introduction - a reusable personal intro one-pager
 
 A small, dependency-free template for the page a new teammate reads when someone
 joins: *who I am, what I'm working on, how I work, and a few things about me
