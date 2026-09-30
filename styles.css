@@ -295,7 +295,7 @@ body::before {
 }
 .avatar {
   position: relative;
-  width: 140px; height: 140px;
+  width: clamp(200px, 24vw, 340px); height: clamp(200px, 24vw, 340px);
   border-radius: var(--radius);
   border: 1px solid var(--line);
   background: var(--surface);
@@ -932,8 +932,8 @@ body.editing [contenteditable="true"]:focus-visible { outline: 2px solid var(--a
     border-bottom: 1px solid var(--hairline);
   }
   .masthead__aside .identity-meta { font-size: 0.72rem; }
-  .avatar { width: 76px; height: 76px; }
-  .avatar .monogram { font-size: 2rem; }
+  .avatar { width: clamp(120px, 34vw, 180px); height: clamp(120px, 34vw, 180px); }
+  .avatar .monogram { font-size: 2.6rem; }
   .identity-meta { text-align: left; }
   .masthead__name { font-size: clamp(2.4rem, 13vw, 3.4rem); max-width: none; }
   .masthead__lead, .masthead__body { grid-column: 1; }
