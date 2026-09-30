@@ -371,7 +371,7 @@
       head.push(meta);
     }
 
-    return el("section", {
+    var sec = el("section", {
       class: "section sec--" + s.layout,
       id: s.id,
       "aria-labelledby": s.title ? "sec-" + s.id : null
@@ -379,6 +379,30 @@
       head.length ? el("div", { class: "section__head" }, head) : null,
       el("div", { class: "section__body" }, body)
     ]);
+    // reorder controls (shown only in edit mode via CSS)
+    sec.appendChild(el("div", { class: "section__move", "aria-hidden": "true" }, [
+      el("button", { class: "section__move-up", type: "button", "aria-label": "Move section up", title: "Move up", text: "↑" }),
+      el("button", { class: "section__move-down", type: "button", "aria-label": "Move section down", title: "Move down", text: "↓" })
+    ]));
+    return sec;
+  }
+
+  // keep the dot rail and the eyebrow numbers in step with the section order
+  function reflowSections() {
+    var secs = [].slice.call(document.querySelectorAll(".sections > .section"));
+    var nav = document.querySelector(".section-nav ul");
+    var n = 0;
+    secs.forEach(function (sec) {
+      if (nav) {
+        var li = (nav.querySelector('a[href="#' + sec.id + '"]') || {}).closest
+          ? nav.querySelector('a[href="#' + sec.id + '"]').closest("li") : null;
+        if (li) nav.appendChild(li);
+      }
+      if (sec.style.display === "none") return;
+      n++;
+      var idx = sec.querySelector(".eyebrow .idx");
+      if (idx) idx.textContent = ("0" + n).slice(-2) + " /";
+    });
   }
 
   /* =========================================================================
@@ -449,6 +473,18 @@
       e.preventDefault();
       var msItem = rmMs.closest(".tl-item");
       if (msItem) { msItem.remove(); persistEdits(); }
+      return;
+    }
+    // reorder a section up/down (edit mode)
+    var mv = t.closest && t.closest(".section__move-up, .section__move-down");
+    if (mv && editing()) {
+      e.preventDefault();
+      var sec = mv.closest(".section");
+      var up = mv.classList.contains("section__move-up");
+      if (up && sec.previousElementSibling) sec.parentNode.insertBefore(sec, sec.previousElementSibling);
+      else if (!up && sec.nextElementSibling) sec.parentNode.insertBefore(sec.nextElementSibling, sec);
+      reflowSections(); persistEdits();
+      sec.scrollIntoView({ block: "center" });
       return;
     }
     // avatar: replace photo anytime
@@ -622,7 +658,7 @@
   restoreEdits(); // bring back any in-place edits / dropped photo from a prior session
 
   document.body.appendChild(el("div", { class: "edit-banner", id: "edit-banner", hidden: "" },
-    "Editing: click any text to change it · drop a photo on the avatar or a project image · Reset or Export when done"));
+    "Editing: click any text to change it · drop a photo on the avatar or a project image · use ↑ ↓ on a section to reorder · Reset or Export when done"));
 
   buildDevPanel();
   wireMotion();
@@ -749,10 +785,10 @@
 
     panel.appendChild(el("h3", { text: "Template" }));
     // picking a preset clears any custom colours so the preset shows through
-    panel.appendChild(selField("Theme", ["paper", "archive", "technical", "dark"], t.preset, function (v) { t.preset = v; t.accent = t.bg = t.surface = t.text = ""; applyTheme(t); syncColors(); }));
+    panel.appendChild(selField("Theme", ["paper", "archive", "technical", "dark", "sand", "sage", "slate", "mono"], t.preset, function (v) { t.preset = v; t.accent = t.bg = t.surface = t.text = ""; applyTheme(t); syncColors(); }));
     panel.appendChild(selField("Fonts", ["editorial", "grotesk", "humanist", "classic", "display", "archivo"], t.fonts, function (v) { t.fonts = v; applyTheme(t); }));
     panel.appendChild(segField("Density", ["compact", "comfortable", "airy"], t.density, function (v) { t.density = v; applyTheme(t); }));
-    panel.appendChild(selField("Backdrop", ["plain", "grid", "dots", "graph"], t.background, function (v) { t.background = v; applyTheme(t); }));
+    panel.appendChild(selField("Backdrop", ["plain", "grid", "dots", "graph", "lines", "diagonal", "cross"], t.background, function (v) { t.background = v; applyTheme(t); }));
     panel.appendChild(selField("Photo frame", ["square", "circle", "blob"], t.photo || "square", function (v) { t.photo = v; applyTheme(t); }));
     panel.appendChild(segField("Orientation", ["scroll", "landscape"], t.orientation || "scroll", function (v) { t.orientation = v; applyTheme(t); }));
     panel.appendChild(segField("Mode", ["professional", "fun"], t.mode || "professional", function (v) { t.mode = v; applyTheme(t); }));
@@ -787,6 +823,7 @@
       visWrap.appendChild(el("label", null, [cb, document.createTextNode(s.title || s.id)]));
     });
     panel.appendChild(el("label", { class: "dev-field" }, el("span", { text: "Sections" })));
+    panel.appendChild(el("p", { class: "dev-hint", text: "Tick to show/hide. With Edit text on, use the ↑ ↓ buttons on each section to reorder." }));
     panel.appendChild(visWrap);
 
     var resetBtn = el("button", { type: "button", text: "Reset edits" });
@@ -841,7 +878,7 @@
       var map = {}; res[1].forEach(function (x) { if (x) map[x.src] = x.data; });
 
       var clone = document.documentElement.cloneNode(true);
-      clone.querySelectorAll("script, noscript, #dev-toggle, #dev-panel, .lightbox, #edit-banner, .section-nav, .deck-arrows, .l-projects__add, .l-project__remove, .l-timeline__add, .tl-item--add, .tl-item__remove, .avatar__hint, .avatar input[type=file], .media__hint, .media input[type=file]").forEach(function (n) { n.remove(); });
+      clone.querySelectorAll("script, noscript, #dev-toggle, #dev-panel, .lightbox, #edit-banner, .section-nav, .deck-arrows, .l-projects__add, .l-project__remove, .l-timeline__add, .tl-item--add, .tl-item__remove, .section__move, .avatar__hint, .avatar input[type=file], .media__hint, .media input[type=file]").forEach(function (n) { n.remove(); });
       clone.querySelectorAll(".is-drop").forEach(function (n) { n.classList.remove("is-drop"); });
       // freeze in-place edits into static text
       clone.querySelectorAll("[contenteditable]").forEach(function (n) { n.removeAttribute("contenteditable"); });

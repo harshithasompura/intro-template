@@ -52,6 +52,50 @@
   --hairline: #2A2926;
 }
 
+:root[data-theme="sand"] {
+  --bg:      #EDE4D3;
+  --surface: #F6EFE1;
+  --ink:     #2A2016;
+  --muted:   #7C6F5C;
+  --line:    #CBBBA0;
+  --accent:  #B5651D;
+  --on-accent: #F6EFE1;
+  --hairline: #DDCFB6;
+}
+
+:root[data-theme="sage"] {
+  --bg:      #E4EAE2;
+  --surface: #F0F3EE;
+  --ink:     #1C231C;
+  --muted:   #66705F;
+  --line:    #BCC7B6;
+  --accent:  #4B7A46;
+  --on-accent: #F0F3EE;
+  --hairline: #CFD8C9;
+}
+
+:root[data-theme="slate"] {
+  --bg:      #14181D;
+  --surface: #1D232A;
+  --ink:     #E8ECF0;
+  --muted:   #929AA5;
+  --line:    #333B45;
+  --accent:  #5AA6C7;
+  --on-accent: #14181D;
+  --hairline: #262D35;
+}
+
+:root[data-theme="mono"] {
+  --bg:      #ECECEC;
+  --surface: #F6F6F6;
+  --ink:     #121212;
+  --muted:   #6A6A6A;
+  --line:    #C4C4C4;
+  --accent:  #121212;
+  --on-accent: #F6F6F6;
+  --hairline: #D6D6D6;
+}
+
 /* ---- FONT PAIRINGS ----------------------------------------------------- */
 :root,
 :root[data-fonts="editorial"] {
@@ -177,6 +221,23 @@ body::before {
   background-image: radial-gradient(var(--line) 1.4px, transparent 1.5px);
   background-size: 24px 24px;
   opacity: .8;
+}
+:root[data-bg="lines"] body::before {
+  background-image: linear-gradient(to bottom, var(--hairline) 1px, transparent 1px);
+  background-size: 100% 32px;
+  opacity: .5;
+}
+:root[data-bg="diagonal"] body::before {
+  background-image: repeating-linear-gradient(45deg, var(--hairline) 0 1px, transparent 1px 12px);
+  opacity: .4;
+}
+:root[data-bg="cross"] body::before {
+  background-image:
+    radial-gradient(var(--line) 1px, transparent 1.5px),
+    radial-gradient(var(--line) 1px, transparent 1.5px);
+  background-position: 0 0, 14px 14px;
+  background-size: 28px 28px;
+  opacity: .5;
 }
 
 /* =============================================================================
@@ -788,9 +849,9 @@ body.editing [contenteditable="true"] {
 body.editing [contenteditable="true"]:hover { outline-color: var(--muted); }
 body.editing [contenteditable="true"]:focus-visible { outline: 2px solid var(--accent); }
 .edit-banner {
-  position: fixed; left: 50%; top: 1rem; transform: translateX(-50%);
-  z-index: 52;
-  font-family: var(--font-mono); font-size: 0.72rem;
+  position: fixed; left: 1rem; bottom: 1rem;
+  z-index: 52; max-width: min(320px, calc(100vw - 2rem));
+  font-family: var(--font-mono); font-size: 0.72rem; line-height: 1.4;
   background: var(--ink); color: var(--bg);
   padding: 0.5em 0.9em; border-radius: var(--radius);
   box-shadow: 0 2px 10px rgba(0,0,0,.18);
@@ -848,6 +909,7 @@ body.editing [contenteditable="true"]:focus-visible { outline: 2px solid var(--a
 }
 .dev-actions button.primary { background: var(--ink); color: var(--bg); border-color: var(--ink); }
 .dev-note { font-size: 0.7rem; color: var(--muted); margin-top: 0.6rem; line-height: 1.4; }
+.dev-hint { font-size: 0.68rem; color: var(--muted); margin: 0.1rem 0 0.4rem; line-height: 1.4; }
 
 /* =============================================================================
    SECTION NAV  — a quiet dot rail; smooth-scrolls section to section.
@@ -1021,6 +1083,22 @@ body.editing .tl-item--add { display: block; padding-top: 2.4rem; }
 }
 .l-timeline__add:hover { color: var(--accent); border-color: var(--accent); }
 
+/* section reorder controls — only in edit mode */
+.section__move { display: none; }
+body.editing .section { position: relative; }
+body.editing .section__move {
+  display: flex; flex-direction: column; gap: 0.25rem;
+  position: absolute; top: 0; right: 0; z-index: 3;
+}
+.section__move button {
+  width: 1.7rem; height: 1.7rem;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: 0.9rem; line-height: 1;
+  color: var(--muted); background: var(--surface);
+  border: 1px solid var(--line); border-radius: var(--radius); cursor: pointer;
+}
+.section__move button:hover { color: var(--accent); border-color: var(--accent); }
+
 /* =============================================================================
    COUNTRIES  — places visited: flag grid, running count, check marks.
    ========================================================================== */
@@ -1131,7 +1209,7 @@ body.editing .tl-item--add { display: block; padding-top: 2.4rem; }
 
   .dev-toggle, .dev-panel, .skip-link, .lightbox,
   .section-nav, .edit-banner, .avatar__hint, .media__hint,
-  .l-projects__add, .l-project__remove, .l-timeline__add, .tl-item--add, .tl-item__remove, .deck-arrows { display: none !important; }
+  .l-projects__add, .l-project__remove, .l-timeline__add, .tl-item--add, .tl-item__remove, .section__move, .deck-arrows { display: none !important; }
   .section { break-inside: avoid; }
   a { text-decoration: none; }
   /* motion is JS-driven; force any un-revealed section visible for print */
