@@ -535,6 +535,10 @@
     if (on) persistEdits();
   }
 
+  // Bump when the rendered markup changes structurally, so snapshots saved by an
+  // older version (e.g. the pre-<details> timeline) are discarded instead of
+  // overwriting the fresh render and resurrecting the old, broken markup.
+  var EDITS_SCHEMA = "2";
   function editsKey() { return "intro:edits:" + slug(P.identity.name); }
   var saveTimer;
   function persistEdits() {
@@ -545,14 +549,22 @@
         // save the content, not the transient editing/motion state
         clone.querySelectorAll("[contenteditable]").forEach(function (n) { n.removeAttribute("contenteditable"); });
         clone.querySelectorAll(".reveal").forEach(function (n) { n.classList.remove("reveal", "is-in"); });
-        localStorage.setItem(editsKey(), clone.innerHTML);
+        localStorage.setItem(editsKey(), JSON.stringify({ v: EDITS_SCHEMA, html: clone.innerHTML }));
       } catch (e) {}
     }, 300);
   }
   function restoreEdits() {
     try {
       var saved = localStorage.getItem(editsKey());
-      if (saved) { document.getElementById("page").innerHTML = saved; return true; }
+      if (saved) {
+        var data = null;
+        try { data = JSON.parse(saved); } catch (e) { data = null; }
+        if (data && data.v === EDITS_SCHEMA && typeof data.html === "string") {
+          document.getElementById("page").innerHTML = data.html;
+          return true;
+        }
+        localStorage.removeItem(editsKey()); // stale or old-format snapshot — drop it, keep the fresh render
+      }
     } catch (e) {}
     return false;
   }
